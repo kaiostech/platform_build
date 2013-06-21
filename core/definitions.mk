@@ -2538,6 +2538,33 @@ include $(BUILD_SYSTEM)/distdir.mk
 -include $(TOPDIR)vendor/*/build/core/definitions.mk
 -include $(TOPDIR)device/*/build/core/definitions.mk
 
+# -----------------------------------------------------------------
+# In-tree modules that should never be installed
+DISABLED_USER_MODULES := \
+	system_server \
+	app_process \
+	surfaceflinger \
+	libsystem_server \
+	librs_jni \
+	libandroid_servers \
+	libsurfaceflinger \
+	libtestplugin \
+	temp_layoutlib \
+	libvideoeditor_jni \
+	libmedia_jni \
+	libmock_ril \
+	libI420colorconvert \
+	apkcheck \
+	elftree \
+	jdwpspy \
+	a3dconvert \
+	libsampleplugin \
+	libstagefright_chromium_http \
+	libjavacore \
+	app_process__asan \
+	libnative-media-jni \
+	xaplay \
+
 # broken:
 #	$(foreach file,$^,$(if $(findstring,.a,$(suffix $file)),-l$(file),$(file)))
 
