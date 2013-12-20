@@ -2544,6 +2544,8 @@ DISABLED_USER_MODULES := \
 	system_server \
 	app_process \
 	surfaceflinger \
+	drmserver \
+	installd \
 	libsystem_server \
 	librs_jni \
 	libandroid_servers \
