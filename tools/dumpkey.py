@@ -21,6 +21,10 @@ from StringIO import StringIO
 import subprocess
 import sys
 
+class UnsupportedKeyError(Exception):
+    """Raised when a key version is not supported."""
+    pass
+
 # http://www.algorithmist.com/index.php/Modular_inverse
 def recursive_egcd(a, b):
     """Returns a triple (g, x, y), such that ax + by = g = gcd(a,b).
@@ -39,7 +43,43 @@ def modinv(a, m):
     else:
         return x % m
 
+def check(key_path):
+    """Raises UnsupportedKeyError if the key is not supported.
+    Otherwise, returns the key version according to
+    the following parameters:
+      1: 2048-bit RSA key with e=3 and SHA-1 hash
+      2: 2048-bit RSA key with e=65537 and SHA-1 hash
+      3: 2048-bit RSA key with e=3 and SHA-256 hash
+      4: 2048-bit RSA key with e=65537 and SHA-256 hash"""
+    algorithm = subprocess.check_output(["openssl", "x509", "-in", key_path, "-text", "-noout",
+                                         "-certopt", "no_serial,no_aux,no_extensions,no_sigdump",
+                                         "-certopt", "no_validity,no_subject,no_issuer,no_header",
+                                         "-certopt", "no_pubkey,no_version"])
+    sha1 = "sha1WithRSAEncryption" in algorithm
+    sha256 = "sha256WithRSAEncryption" in algorithm
+
+    pubkey = subprocess.check_output(["openssl", "x509", "-in", key_path, "-text", "-noout",
+                                      "-certopt", "no_serial,no_aux,no_extensions,no_sigdump",
+                                      "-certopt", "no_validity,no_subject,no_issuer,no_header",
+                                      "-certopt", "no_signame,no_version"])
+    exponent3 = "Exponent: 3 " in pubkey
+    exponent65537 = "Exponent: 65537 " in pubkey
+
+    if sha1 and exponent3: return 1
+    if sha1 and exponent65537: return 2
+    if sha256 and exponent3: return 3
+    if sha256 and exponent65537: return 4
+
+    if not sha1 and not sha256:
+        raise UnsupportedKeyError("Unknown signature algorithm: %s" % algorithm)
+    else: # if not exponent3 and not exponent65537
+        raise UnsupportedKeyError("Unsupported exponent in key:\n%s" % pubkey)
+
 def write_key(key_path, out):
+    version = check(key_path)
+    if version > 1:
+        out.write("v%d " % version)
+
     modulus = subprocess.check_output(["openssl", "x509", "-in", key_path, "-modulus", "-noout"])
     N = long(modulus.replace("Modulus=", ""), 16)
 
