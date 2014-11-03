@@ -28,8 +28,7 @@
 # $(call ) isn't necessary.
 #
 define _find-android-products-files
-$(shell test -d device && find device -maxdepth 6 -name AndroidProducts.mk) \
-  $(shell test -d vendor && find vendor -maxdepth 6 -name AndroidProducts.mk) \
+$(shell test -d device && find device -maxdepth 3 -name AndroidProducts.mk) \
   $(SRC_TARGET_DIR)/product/AndroidProducts.mk
 endef
 
