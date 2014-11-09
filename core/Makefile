@@ -610,7 +610,6 @@ tools_notice_file_txt := $(HOST_OUT_INTERMEDIATES)/NOTICE.txt
 tools_notice_file_html := $(HOST_OUT_INTERMEDIATES)/NOTICE.html
 
 ifndef TARGET_BUILD_APPS
-kernel_notice_file := $(TARGET_OUT_NOTICE_FILES)/src/kernel.txt
 pdk_fusion_notice_files := $(filter $(TARGET_OUT_NOTICE_FILES)/%, $(ALL_PDK_FUSION_FILES))
 
 $(eval $(call combine-notice-files, \
@@ -643,16 +642,6 @@ ifeq ($(ONE_SHOT_MAKEFILE),)
 ALL_DEFAULT_INSTALLED_MODULES += $(installed_notice_html_gz)
 endif
 endif  # TARGET_BUILD_APPS
-
-# The kernel isn't really a module, so to get its module file in there, we
-# make the target NOTICE files depend on this particular file too, which will
-# then be in the right directory for the find in combine-notice-files to work.
-$(kernel_notice_file): \
-	    prebuilts/qemu-kernel/arm/LINUX_KERNEL_COPYING \
-	    | $(ACP)
-	@echo Copying: $@
-	$(hide) mkdir -p $(dir $@)
-	$(hide) $(ACP) $< $@
 
 
 # -----------------------------------------------------------------
