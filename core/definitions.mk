@@ -2555,6 +2555,7 @@ DISABLED_USER_MODULES := \
 	libvideoeditor_jni \
 	libmedia_jni \
 	libmock_ril \
+	lmkd \
 	apkcheck \
 	elftree \
 	jdwpspy \
