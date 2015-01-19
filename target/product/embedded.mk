@@ -72,16 +72,6 @@ PRODUCT_PACKAGES += \
     toybox \
     tzdatacheck \
 
-# SELinux packages
-PRODUCT_PACKAGES += \
-    sepolicy \
-    file_contexts \
-    seapp_contexts \
-    property_contexts \
-    mac_permissions.xml \
-    selinux_version \
-    service_contexts
-
 # Ensure that this property is always defined so that bionic_systrace.cpp
 # can rely on it being initially set by init.
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \

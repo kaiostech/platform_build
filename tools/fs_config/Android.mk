@@ -18,7 +18,7 @@ include $(CLEAR_VARS)
 
 LOCAL_SRC_FILES := fs_config.c
 LOCAL_MODULE := fs_config
-LOCAL_SHARED_LIBRARIES := libcutils libselinux
+LOCAL_SHARED_LIBRARIES := libcutils
 LOCAL_CFLAGS := -Werror
 
 include $(BUILD_HOST_EXECUTABLE)
