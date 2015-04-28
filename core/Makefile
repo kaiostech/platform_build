@@ -699,7 +699,7 @@ ifeq ($(TARGET_USERIMAGES_USE_F2FS),true)
 INTERNAL_USERIMAGES_DEPS += $(MKF2FSUSERIMG) $(MAKE_F2FS)
 endif
 else
-INTERNAL_USERIMAGES_DEPS := $(MKYAFFS2)
+INTERNAL_USERIMAGES_DEPS := $(MKYAFFS2) $(MKFSUBIFS) $(UBINIZE) $(MKDEVTBL)
 endif
 
 ifeq ($(BOARD_SYSTEMIMAGE_FILE_SYSTEM_TYPE),squashfs)
@@ -1351,11 +1351,13 @@ endif
 # host tools needed to build dist and OTA packages
 
 DISTTOOLS :=  $(HOST_OUT_EXECUTABLES)/minigzip \
-<<<<<<< HEAD
   $(HOST_OUT_EXECUTABLES)/mkbootfs \
   $(HOST_OUT_EXECUTABLES)/mkbootimg \
   $(HOST_OUT_EXECUTABLES)/fs_config \
 	$(HOST_OUT_EXECUTABLES)/mkyaffs2image \
+	$(HOST_OUT_EXECUTABLES)/mkfsubifs \
+  $(HOST_OUT_EXECUTABLES)/ubinize \
+	$(HOST_OUT_EXECUTABLES)/mkdevtbl \
   $(HOST_OUT_EXECUTABLES)/zipalign \
   $(HOST_OUT_EXECUTABLES)/bsdiff \
   $(HOST_OUT_EXECUTABLES)/imgdiff \
