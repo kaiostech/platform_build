@@ -2567,6 +2567,8 @@ DISABLED_USER_MODULES := \
 	libnative-media-jni \
 	xaplay \
 	libdrmframework_jni \
+	webview \
+	libwebview \
 
 # broken:
 #	$(foreach file,$^,$(if $(findstring,.a,$(suffix $file)),-l$(file),$(file)))
