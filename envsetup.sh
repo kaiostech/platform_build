@@ -231,7 +231,7 @@ function printconfig()
 function set_stuff_for_environment()
 {
     settitle
-    set_java_home
+    #set_java_home
     setpaths
     set_sequence_number
 
