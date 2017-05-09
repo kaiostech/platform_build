@@ -36,6 +36,8 @@ import zipfile
 
 import build_image
 import common
+import shutil
+import stat
 
 OPTIONS = common.OPTIONS
 
@@ -69,6 +71,12 @@ def AddSystem(output_zip, prefix="IMAGES/", recovery_img=None, boot_img=None):
                         block_list=block_list)
   common.ZipWrite(output_zip, imgname, prefix + "system.img")
   common.ZipWrite(output_zip, block_list, prefix + "system.map")
+  # overlay system image in product out folder
+  if outpath:
+    shutil.copy(imgname, outpath+'/system.img')
+    shutil.copy(block_list, outpath+'/system.map')
+    os.chmod(outpath+'/system.img',stat.S_IRUSR|stat.S_IWUSR|stat.S_IRGRP|stat.S_IROTH)
+    os.chmod(outpath+'/system.map',stat.S_IRUSR|stat.S_IWUSR|stat.S_IRGRP|stat.S_IROTH)
 
 
 def BuildSystem(input_dir, info_dict, block_list=None):
@@ -202,9 +210,13 @@ def AddUserdata(output_zip, prefix="IMAGES/"):
 
   common.CheckSize(img.name, "userdata.img", OPTIONS.info_dict)
   common.ZipWrite(output_zip, img.name, prefix + "userdata.img")
+  # overlay userdata image in product out folder
+  if outpath:
+    shutil.copy(img.name, outpath+'/userdata.img')
+    os.chmod(outpath+'/userdata.img',stat.S_IRUSR|stat.S_IWUSR|stat.S_IRGRP|stat.S_IROTH)
   img.close()
-  os.rmdir(user_dir)
-  os.rmdir(temp_dir)
+  shutil.rmtree(temp_dir)
+
 
 
 def AddCache(output_zip, prefix="IMAGES/"):
@@ -245,10 +257,29 @@ def AddCache(output_zip, prefix="IMAGES/"):
 
   common.CheckSize(img.name, "cache.img", OPTIONS.info_dict)
   common.ZipWrite(output_zip, img.name, prefix + "cache.img")
+  # overlay cache image in product out folder
+  if outpath:
+    shutil.copy(img.name, outpath+'/cache.img')
+    os.chmod(outpath+'/cache.img',stat.S_IRUSR|stat.S_IWUSR|stat.S_IRGRP|stat.S_IROTH)
   img.close()
   os.rmdir(user_dir)
   os.rmdir(temp_dir)
 
+def zip_dir(maindir, subdir, zipfiledir, zipfilename):
+  print 'compressing files of ' + maindir + '/' + subdir + ' to ' + zipfiledir + '/' + zipfilename + '.zip'
+  dirname = maindir + '/' + subdir
+  filelist = []
+  if os.path.isfile(dirname):
+      filelist.append(dirname)
+  else :
+      print dirname
+      for root, dirs, files in os.walk(dirname):
+          for name in files:
+            filelist.append(os.path.join(root, name))
+  zf = zipfile.ZipFile(zipfiledir + '/' + zipfilename + '.zip', "a", zipfile.zlib.DEFLATED)
+  for tar in filelist:
+    common.ZipWrite(zf, tar, tar[tar.find(subdir):])
+  zf.close()
 
 def AddImagesToTargetFiles(filename):
   OPTIONS.input_tmp, input_zip = common.UnzipTemp(filename)
@@ -290,6 +321,10 @@ def AddImagesToTargetFiles(filename):
         "IMAGES/boot.img", "boot.img", OPTIONS.input_tmp, "BOOT")
     if boot_image:
       boot_image.AddToZip(output_zip)
+      # overlay boot image in product out folder
+      if outpath:
+        open(outpath+'/boot.img','w').write(boot_image.data)
+        os.chmod(outpath+'/boot.img',stat.S_IRUSR|stat.S_IWUSR|stat.S_IRGRP|stat.S_IROTH)
 
   banner("recovery")
   recovery_image = None
@@ -304,6 +339,10 @@ def AddImagesToTargetFiles(filename):
         "IMAGES/recovery.img", "recovery.img", OPTIONS.input_tmp, "RECOVERY")
     if recovery_image:
       recovery_image.AddToZip(output_zip)
+      # overlay recovery image in product out folder
+      if outpath:
+        open(outpath+'/recovery.img','w').write(recovery_image.data)
+        os.chmod(outpath+'/recovery.img',stat.S_IRUSR|stat.S_IWUSR|stat.S_IRGRP|stat.S_IROTH)
 
   banner("system")
   AddSystem(output_zip, recovery_img=recovery_image, boot_img=boot_image)
@@ -315,6 +354,17 @@ def AddImagesToTargetFiles(filename):
   banner("cache")
   AddCache(output_zip)
 
+  if outpath:
+    zip_dir(OPTIONS.input_tmp, 'META', outpath, 'oem_fota_meta')
+    zip_dir(OPTIONS.input_tmp, 'OTA', outpath, 'oem_fota_meta')
+    zf = zipfile.ZipFile(outpath  + '/oem_fota_meta.zip', "a", zipfile.zlib.DEFLATED)
+    common.ZipWrite(zf, outpath + '/system.map', '/IMAGES/system.map')
+    #common.ZipWrite(zf, OPTIONS.input_tmp + '/SYSTEM/system.ver', '/SYSTEM/system.ver')
+    common.ZipWrite(zf, OPTIONS.input_tmp + '/SYSTEM/build.prop', '/SYSTEM/build.prop')
+    common.ZipWrite(zf, OPTIONS.input_tmp + '/SYSTEM/recovery-from-boot.p', '/SYSTEM/recovery-from-boot.p')
+    common.ZipWrite(zf, OPTIONS.input_tmp + '/SYSTEM/bin/install-recovery.sh', '/SYSTEM/bin/install-recovery.sh')
+    common.ZipWrite(zf, OPTIONS.input_tmp + '/RADIO/filesmap', '/RADIO/filesmap')
+    zf.close()
   common.ZipClose(output_zip)
 
 def main(argv):
@@ -343,8 +393,12 @@ def main(argv):
 
 
   if len(args) != 1:
-    common.Usage(__doc__)
-    sys.exit(1)
+    if len(args) == 2:
+      global outpath
+      outpath = args[1]
+    else:
+      common.Usage(__doc__)
+      sys.exit(1)
 
   AddImagesToTargetFiles(args[0])
   print "done."
