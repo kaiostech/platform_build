@@ -1619,8 +1619,10 @@ endif
 .PHONY: target-files-package
 target-files-package: $(BUILT_TARGET_FILES_PACKAGE)
 
+ifneq ($(TARGET_BUILD_VARIANT),eng)
 ifeq ($(filter dist,$(MAKECMDGOALS)),)
 droidcore : target-files-package
+endif
 endif
 ifneq ($(filter $(MAKECMDGOALS),target-files-package),)
 $(call dist-for-goals, target-files-package, $(BUILT_TARGET_FILES_PACKAGE))
