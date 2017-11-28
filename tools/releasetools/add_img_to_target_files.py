@@ -351,8 +351,8 @@ def AddImagesToTargetFiles(filename):
     AddVendor(output_zip)
   banner("userdata")
   AddUserdata(output_zip)
-  banner("cache")
-  AddCache(output_zip)
+  #banner("cache")
+  #AddCache(output_zip)
 
   if outpath:
     zip_dir(OPTIONS.input_tmp, 'META', outpath, 'oem_fota_meta')
