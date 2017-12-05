@@ -1412,6 +1412,7 @@ $(BUILT_OTATOOLS_PACKAGE): $(OTATOOLS) | $(ACP)
 .PHONY: otatools-package
 otatools-package: $(BUILT_OTATOOLS_PACKAGE)
 
+INSTALLED_USBIMAGE_TARGET := $(PRODUCT_OUT)/usbmsc.img
 
 # -----------------------------------------------------------------
 # A zip of the directories that map to the target filesystem.
@@ -1462,6 +1463,10 @@ ifeq ($(TARGET_RELEASETOOLS_EXTENSIONS),)
 $(BUILT_TARGET_FILES_PACKAGE): tool_extensions := $(TARGET_DEVICE_DIR)/../common
 else
 $(BUILT_TARGET_FILES_PACKAGE): tool_extensions := $(TARGET_RELEASETOOLS_EXTENSIONS)
+endif
+
+ifeq ($(filter dist,$(MAKECMDGOALS)),)
+droidcore : target-files-package
 endif
 
 # Depending on the various images guarantees that the underlying
