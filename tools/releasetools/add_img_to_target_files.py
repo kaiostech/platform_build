@@ -357,12 +357,9 @@ def AddImagesToTargetFiles(filename):
   if outpath:
     zip_dir(OPTIONS.input_tmp, 'META', outpath, 'oem_fota_meta')
     zip_dir(OPTIONS.input_tmp, 'OTA', outpath, 'oem_fota_meta')
+    zip_dir(OPTIONS.input_tmp, 'SYSTEM', outpath, 'oem_fota_meta')
     zf = zipfile.ZipFile(outpath  + '/oem_fota_meta.zip', "a", zipfile.zlib.DEFLATED)
     common.ZipWrite(zf, outpath + '/system.map', '/IMAGES/system.map')
-    #common.ZipWrite(zf, OPTIONS.input_tmp + '/SYSTEM/system.ver', '/SYSTEM/system.ver')
-    common.ZipWrite(zf, OPTIONS.input_tmp + '/SYSTEM/build.prop', '/SYSTEM/build.prop')
-    common.ZipWrite(zf, OPTIONS.input_tmp + '/SYSTEM/recovery-from-boot.p', '/SYSTEM/recovery-from-boot.p')
-    common.ZipWrite(zf, OPTIONS.input_tmp + '/SYSTEM/bin/install-recovery.sh', '/SYSTEM/bin/install-recovery.sh')
     common.ZipWrite(zf, OPTIONS.input_tmp + '/RADIO/filesmap', '/RADIO/filesmap')
     zf.close()
   common.ZipClose(output_zip)
