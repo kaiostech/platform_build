@@ -305,6 +305,12 @@ def AddImagesToTargetFiles(filename):
   output_zip = zipfile.ZipFile(filename, "a",
                                compression=zipfile.ZIP_DEFLATED)
 
+  fstab = OPTIONS.info_dict["fstab"]
+  if fstab:
+    ubi_fs = (fstab["/system"].fs_type == "ubifs")
+  else:
+    ubi_fs = False
+
   def banner(s):
     print "\n\n++++ " + s + " ++++\n\n"
 
@@ -343,23 +349,28 @@ def AddImagesToTargetFiles(filename):
       if outpath:
         open(outpath+'/recovery.img','w').write(recovery_image.data)
         os.chmod(outpath+'/recovery.img',stat.S_IRUSR|stat.S_IWUSR|stat.S_IRGRP|stat.S_IROTH)
-
-  banner("system")
-  AddSystem(output_zip, recovery_img=recovery_image, boot_img=boot_image)
+  if not ubi_fs:
+    banner("system")
+    AddSystem(output_zip, recovery_img=recovery_image, boot_img=boot_image)
   if has_vendor:
     banner("vendor")
     AddVendor(output_zip)
-  banner("userdata")
-  AddUserdata(output_zip)
+  #banner("userdata")
+  #AddUserdata(output_zip)
   #banner("cache")
   #AddCache(output_zip)
 
   if outpath:
     zip_dir(OPTIONS.input_tmp, 'META', outpath, 'oem_fota_meta')
     zip_dir(OPTIONS.input_tmp, 'OTA', outpath, 'oem_fota_meta')
-    zip_dir(OPTIONS.input_tmp, 'SYSTEM', outpath, 'oem_fota_meta')
+    if ubi_fs:
+      zip_dir(OPTIONS.input_tmp, 'SYSTEM', outpath, 'oem_fota_meta')
     zf = zipfile.ZipFile(outpath  + '/oem_fota_meta.zip', "a", zipfile.zlib.DEFLATED)
-    common.ZipWrite(zf, outpath + '/system.map', '/IMAGES/system.map')
+    if not ubi_fs:
+      common.ZipWrite(zf, outpath + '/system.map', '/IMAGES/system.map')
+      common.ZipWrite(zf, OPTIONS.input_tmp + '/SYSTEM/build.prop', '/SYSTEM/build.prop')
+      common.ZipWrite(zf, OPTIONS.input_tmp + '/SYSTEM/recovery-from-boot.p', '/SYSTEM/recovery-from-boot.p')
+      common.ZipWrite(zf, OPTIONS.input_tmp + '/SYSTEM/bin/install-recovery.sh', '/SYSTEM/bin/install-recovery.sh')
     common.ZipWrite(zf, OPTIONS.input_tmp + '/RADIO/filesmap', '/RADIO/filesmap')
     zf.close()
   common.ZipClose(output_zip)
