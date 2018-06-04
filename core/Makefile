@@ -797,7 +797,11 @@ endif
 ifneq (,$(filter xxxhdpi 560dpi xxhdpi 400dpi xhdpi,$(recovery_density)))
 recovery_font := $(call include-path-for, recovery)/fonts/18x32.png
 else
+ifneq (,$(filter ldpi,$(recovery_density)))
+recovery_font := $(call include-path-for, recovery)/fonts/6x11.png
+else
 recovery_font := $(call include-path-for, recovery)/fonts/12x22.png
+endif
 endif
 
 recovery_resources_private := $(strip $(wildcard $(TARGET_DEVICE_DIR)/recovery/res))
