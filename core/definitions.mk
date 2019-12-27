@@ -3269,6 +3269,69 @@ include $(BUILD_SYSTEM)/distdir.mk
 -include $(TOPDIR)device/*/build/core/definitions.mk
 -include $(TOPDIR)product/*/build/core/definitions.mk
 
+
+# -----------------------------------------------------------------
+# In-tree modules that should never be installed
+DISABLED_USER_MODULES := \
+    BluetoothMidiService \
+    app_prediction \
+    BackupRestoreConfirmation \
+    CarSystemUI \
+    CarrierDefaultApp \
+    CarrierDefaultAppUnitTests \
+    CompanionDeviceManager \
+    libshim_jni \
+    EasterEgg \
+    ExternalStorageProvider \
+    ExternalStorageProviderTests \
+    FakeOemFeatures \
+    FusedLocation \
+    LocalTransport \
+    OsuLogin \
+    PackageInstaller \
+    PrintSpooler \
+    libprintspooler_jni \
+    PrintSpoolerOutOfProcessTests \
+    SettingsLibActionBarShadow \
+    SettingsLibActionButtonsPreference \
+    SettingsLibAdaptiveIcon \
+    SettingsLib \
+    SettingsLibDefaults \
+    SettingsLibAppPreference \
+    SettingsLibBarChartPreference \
+    SettingsLibEntityHeaderWidgets \
+    SettingsLibHelpUtils \
+    SettingsLibLayoutPreference \
+    SettingsLibProgressBar \
+    SettingsLibRestrictedLockUtils \
+    SettingsLibSearchWidget \
+    SettingsLibSettingsSpinner \
+    SettingsLibTile \
+    SettingsProvider \
+    SettingsProviderTest \
+    SharedStorageBackup \
+    StatementService \
+    SystemUI-proto \
+    SystemUI-tags \
+    SystemUI-core \
+    SystemUI-tests \
+    SystemUI \
+    SystemUIWithLegacyRecents \
+    SystemUIPluginLib \
+    PluginDummyLib \
+    ExamplePlugin \
+    PluginCoreLib \
+    SystemUISharedLib \
+    VpnDialogs \
+    WAPPushManager \
+    WAPPushManagerTests \
+    WallpaperBackup \
+    WallpaperCropper \
+    PacProcessor \
+    libjni_pacprocessor \
+    ProxyHandler \
+    Telephony \
+    TeleService \
 # broken:
 #	$(foreach file,$^,$(if $(findstring,.a,$(suffix $file)),-l$(file),$(file)))
 

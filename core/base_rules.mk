@@ -162,6 +162,10 @@ ifneq ($(filter $(my_module_tags),user),)
   $(error user tag detected on module.)
 endif
 
+ifneq ($(filter $(DISABLED_USER_MODULES),$(LOCAL_MODULE)),)
+LOCAL_MODULE_TAGS := optional
+endif
+
 my_bad_module_tags := $(filter eng debug,$(my_module_tags))
 ifdef my_bad_module_tags
   ifeq (true,$(LOCAL_UNINSTALLABLE_MODULE))
@@ -367,6 +371,10 @@ ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
   LOCAL_INSTALLED_MODULE := $(my_module_path)/$(my_installed_module_stem)
 endif
 
+ifneq ($(filter $(DISABLED_USER_MODULES),$(LOCAL_MODULE)),)
+LOCAL_BUILT_MODULE :=
+endif
+
 # Assemble the list of targets to create PRIVATE_ variables for.
 LOCAL_INTERMEDIATE_TARGETS += $(LOCAL_BUILT_MODULE)
 
@@ -462,6 +470,10 @@ $(foreach c, $(my_path_components),\
 ###########################################################
 ## Module installation rule
 ###########################################################
+
+ifneq ($(filter $(DISABLED_USER_MODULES),$(LOCAL_MODULE)),)
+LOCAL_UNINSTALLABLE_MODULE := true
+endif
 
 my_init_rc_installed :=
 my_init_rc_pairs :=
