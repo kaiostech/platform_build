@@ -28,13 +28,16 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/gsi_common.mk)
 
 # Enable mainline checking for excat this product name
 ifeq (aosp_arm,$(TARGET_PRODUCT))
-PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS := relaxed
+#PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS := relaxed
 endif
+
+ENABLE_DEFAULT_BOOTANIMATION := true
 
 # Emulator for vendor
 $(call inherit-product-if-exists, device/generic/goldfish/arm32-vendor.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/emulator_vendor.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/board/generic_x86/device.mk)
+$(call inherit-product, gonk-misc/b2g.mk)
 
 PRODUCT_NAME := aosp_arm
 PRODUCT_DEVICE := generic
