@@ -1432,7 +1432,7 @@ $(PRODUCT_OUT)/offending_artifacts.txt:
 	$(foreach f,$(sort $(all_offending_files)),echo $(f) >> $@;)
   endif
 
-  $(call check-apex-libs-absence,$(product_target_FILES))
+  #$(call check-apex-libs-absence,$(product_target_FILES))
 else
   # We're not doing a full build, and are probably only including
   # a subset of the module makefiles.  Don't try to build any modules

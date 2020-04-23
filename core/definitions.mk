@@ -3332,6 +3332,18 @@ DISABLED_USER_MODULES := \
     ProxyHandler \
     Telephony \
     TeleService \
+    art-runtime \
+    art-tools \
+    webview \
+    installd \
+    otapreopt \
+    dexdiag \
+    libart-dexlayout \
+    oatdump \
+    libvixld \
+    dexlayout \
+    libart-disassembler \
+    libart \
 # broken:
 #	$(foreach file,$^,$(if $(findstring,.a,$(suffix $file)),-l$(file),$(file)))
 
