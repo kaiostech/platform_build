@@ -370,6 +370,20 @@ BUILD_WITHOUT_PV := true
 
 ADDITIONAL_BUILD_PROPERTIES += net.bt.name=Android
 
+# Add KaiOS build UID to system property
+REPO_INFO := $(GECKO_OBJDIR)/dist/repo_info.txt
+ifneq ($(wildcard $(REPO_INFO)),)
+  # It's called md5 on Mac OS and md5sum on Linux
+  ifeq ($(HOST_OS),darwin)
+    MD5SUM := md5 -q
+  else
+    # cut the extra '-' at the end
+    MD5SUM := md5sum | cut -d ' ' -f1
+  endif
+
+  ADDITIONAL_BUILD_PROPERTIES += ro.build.kaios_uid=$(shell cat $(REPO_INFO) | $(MD5SUM))
+endif
+
 # ------------------------------------------------------------
 # Define a function that, given a list of module tags, returns
 # non-empty if that module should be installed in /system.
